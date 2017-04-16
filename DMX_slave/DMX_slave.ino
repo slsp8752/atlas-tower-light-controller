@@ -4,7 +4,10 @@
  * Teddy Lowe and Slaton Spangler, April 2017
  */
 
+#include <Wire.h>
 #include <DmxSimple.h>
+
+#define DEBUG 1
 
 void setup() {
   // initialize the DMX output on pin 3
@@ -17,6 +20,9 @@ void setup() {
   Wire.begin(8);  
   // Receive the keyframes
   Wire.onReceive(receiveData);
+
+  if (DEBUG)
+    Serial.begin(9600);
 }
 
 void loop() {
@@ -24,7 +30,7 @@ void loop() {
 
 }
 
-void receiveData(){
+void receiveData(int a){
   while (Wire.available()) { // loop through all but the last
     char c = Wire.read(); // receive byte as a character
     Serial.print(c);         // print the character
