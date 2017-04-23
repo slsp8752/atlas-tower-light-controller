@@ -1,12 +1,29 @@
 /*
- * DMX_slave - driver for an Arduino Pro Mini to receive DMX data via I2C and spit it out using the DmxSimple Library
- * 
- * Teddy Lowe and Slaton Spangler, April 2017
- */
+   DMX_slave - driver for an Arduino Pro Mini to receive DMX data via I2C and spit it out using the DmxSimple Library
+
+   Teddy Lowe and Slaton Spangler, April 2017
+*/
+
+// TODO
+// Parse keyframe data
+// "k1lNr255g000b128mFt10000"
+//
+
 
 #include <DmxSimple.h>
+#include <Wire.h>
+
+#define DEBUG 1
+#define INPUT_SIZE 24 //This needs to be a max-size, but currently functions as an absolute length.
+
+int i = 0;
+
 
 void setup() {
+
+  if (DEBUG)
+    Serial.begin(9600);
+
   // initialize the DMX output on pin 3
   DmxSimple.usePin(3);
 
@@ -14,9 +31,10 @@ void setup() {
   DmxSimple.maxChannel(4);
 
   // Start as I2C slave on address 8
-  Wire.begin(8);  
+  Wire.begin(8);
   // Receive the keyframes
   Wire.onReceive(receiveData);
+
 }
 
 void loop() {
@@ -24,10 +42,11 @@ void loop() {
 
 }
 
-void receiveData(){
-  while (Wire.available()) { // loop through all but the last
-    char c = Wire.read(); // receive byte as a character
-    Serial.print(c);         // print the character
-  }
+void receiveData() {
+  char input[INPUT_SIZE + 1];
+  byte size = Wire.readBytes(input, INPUT_SIZE);
+  input[size] = 0;
+  Serial.println(input);
+
 }
 
