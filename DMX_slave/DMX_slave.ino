@@ -10,6 +10,7 @@
 //
 
 
+#include <Wire.h>
 #include <DmxSimple.h>
 #include <Wire.h>
 
@@ -18,6 +19,8 @@
 
 int i = 0;
 
+
+#define DEBUG 1
 
 void setup() {
 
@@ -47,6 +50,5 @@ void receiveData() {
   byte size = Wire.readBytes(input, INPUT_SIZE);
   input[size] = 0;
   Serial.println(input);
-
 }
 
