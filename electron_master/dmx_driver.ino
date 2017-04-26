@@ -7,8 +7,13 @@ void setup() {
 byte x = 0;
 
 void loop() {
-  Wire.beginTransmission(8); // transmit to device #8
-  Wire.write("k1lNr255g000b128mFt10000");
-  Wire.endTransmission();    // stop transmitting
-  delay(500);
+  for (int i = 0; i<20; i++){
+    Wire.beginTransmission(8); // transmit to device #8
+    //for (int j = 0; j < i+1; j++){
+      Wire.write("k1lNr255g000b128mFt10000k1lNr255g000b128mFt10000k1lNr255g000b128mFt10000");
+    //}
+    Wire.endTransmission();    // stop transmitting
+    delay(10000);
+  }
+  delay(1000000);
 }

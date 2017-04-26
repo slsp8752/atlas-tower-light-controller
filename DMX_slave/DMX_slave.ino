@@ -15,10 +15,13 @@
 #include <Wire.h>
 
 #define DEBUG 1
-#define INPUT_SIZE 24 //This needs to be a max-size, but currently functions as an absolute length.
+#define INPUT_SIZE 32 //This needs to be a max-size, but currently functions as an absolute length.
 
-int i = 0;
 
+// globals
+char input[INPUT_SIZE];
+
+// add details for keyframe data types
 
 #define DEBUG 1
 
@@ -41,14 +44,29 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  // Send dmx data!
 
 }
 
-void receiveData() {
-  char input[INPUT_SIZE + 1];
-  byte size = Wire.readBytes(input, INPUT_SIZE);
-  input[size] = 0;
+void receiveData(int a) {
+  
+  int i = 0;
+  
+  while(Wire.available()){
+    
+    if (i >= INPUT_SIZE-1)
+      break;
+
+    input[i] = Wire.read();
+
+    i++;
+  }
+
+  // check keyframe number - if 1, then clear other keyframes first
+  // refill keyframe buffers
+  
+  
   Serial.println(input);
+  
 }
 
