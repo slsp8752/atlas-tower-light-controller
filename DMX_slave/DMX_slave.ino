@@ -15,15 +15,38 @@
 #include <Wire.h>
 
 #define DEBUG 1
-#define INPUT_SIZE 32 //This needs to be a max-size, but currently functions as an absolute length.
+#define INPUT_SIZE 32 // This is the size of the I2C buffer, in bytes
+#define NUM_KEYS 10   // This is the total number of keyframes, for future use
 
 
 // globals
 char input[INPUT_SIZE];
 
-// add details for keyframe data types
+// Keyframe structure
 
-#define DEBUG 1
+struct keyframe{
+  int knum;       // keyframe number, 1-10
+//  int lnum;       // light number, 1-4, future plan
+  int red;        // red value, 0-255
+  int green;      // green value, 0-255
+  int blue;       // blue value, 0-255
+  int mode;       // keyframe mode, currently unused = 0, snap = 1, fade = 2
+  int duration;   // keyframe duration, 0-10000 ms
+};
+
+// initial setup, if you want more keyframes add them here and include them in the keyframes[] array
+keyframe key0 = {.knum = 0, .red = 0, .green = 0, .blue = 0, .mode = 1, .duration = 500};
+keyframe key1 = {.knum = 1, .red = 255, .green = 255, .blue = 255, .mode = 1, .duration = 500};
+keyframe key2 = {.knum = 2, .red = 0, .green = 0, .blue = 0, .mode = 1, .duration = 500};
+keyframe key3 = {.knum = 3, .red = 255, .green = 255, .blue = 255, .mode = 1, .duration = 500};
+keyframe key4 = {.knum = 4, .red = 0, .green = 0, .blue = 0, .mode = 1, .duration = 500};
+keyframe key5 = {.knum = 5, .red = 255, .green = 255, .blue = 255, .mode = 1, .duration = 500};
+keyframe key6 = {.knum = 6, .red = 0, .green = 0, .blue = 0, .mode = 1, .duration = 500};
+keyframe key7 = {.knum = 7, .red = 255, .green = 255, .blue = 255, .mode = 1, .duration = 500};
+keyframe key8 = {.knum = 8, .red = 0, .green = 0, .blue = 0, .mode = 1, .duration = 500};
+keyframe key9 = {.knum = 9, .red = 255, .green = 255, .blue = 255, .mode = 1, .duration = 500};
+
+struct keyframe keyframes[NUM_KEYS] = {key0, key1, key2, key3, key4, key5, key6, key7, key8, key9};
 
 void setup() {
 
@@ -52,6 +75,7 @@ void receiveData(int a) {
   
   int i = 0;
   
+  // Grab i2c data, it maxes out at 32 bytes
   while(Wire.available()){
     
     if (i >= INPUT_SIZE-1)
@@ -62,11 +86,18 @@ void receiveData(int a) {
     i++;
   }
 
+  Serial.println(input);
+  
   // check keyframe number - if 1, then clear other keyframes first
   // refill keyframe buffers
   
+  if (input[1] == 1){
+    for(int j = 0; j < NUM_KEYS; j++){
+      keyframes[j].mode = 0;            // clear all keyframe modes until proven to be used
+    }
+  }
   
-  Serial.println(input);
+  //keyframe[input[1]].
   
 }
 
