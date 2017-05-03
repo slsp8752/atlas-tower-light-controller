@@ -6,7 +6,7 @@
 
 // TODO
 // Parse keyframe data
-// "k1lNr255g000b128mFt10000"
+// "k1r255g000b128m1t10000"
 //
 
 
@@ -72,8 +72,12 @@ void loop() {
 }
 
 void receiveData(int a) {
+
+  // data must be formatted exactly as follows - k1r255g000b128m1t10000
+  // currently, if the first keyframe is malformed, the rest will be loaded over past data without regard to the current buffer
   
   int i = 0;
+  char buffer[6];
   
   // Grab i2c data, it maxes out at 32 bytes
   while(Wire.available()){
@@ -87,6 +91,12 @@ void receiveData(int a) {
   }
 
   Serial.println(input);
+
+  // check for malformed data
+  if (input[0] != 'k' || input[2] != 'r' || input[6] != 'g' || input[10] != 'b' || input[14] != 'm' || input[16] != 't'){
+    Serial.println("Malformed data, exiting parser...");
+    return;
+  }
   
   // check keyframe number - if 1, then clear other keyframes first
   // refill keyframe buffers
@@ -97,7 +107,42 @@ void receiveData(int a) {
     }
   }
   
-  //keyframe[input[1]].
+  // parse data from input, the brute force way
+
+  //red
+  buffer[0] = input[3];
+  buffer[1] = input[4];
+  buffer[2] = input[5];
+  buffer[3] = '\0';
+  keyframe[input[1]].red = atoi(buffer);
+
+  //green
+  buffer[0] = input[7];
+  buffer[1] = input[8];
+  buffer[2] = input[9];
+  buffer[3] = '\0';
+  keyframe[input[1]].green = atoi(buffer);
+
+  //blue
+  buffer[0] = input[11];
+  buffer[1] = input[12];
+  buffer[2] = input[13];
+  buffer[3] = '\0';
+  keyframe[input[1]].blue = atoi(buffer);
+
+  //mode
+  buffer[0] = input[15];
+  buffer[1] = '\0';
+  keyframe[input[1]].mode = atoi(buffer);
+
+  //duration
+  buffer[0] = input[17];
+  buffer[1] = input[18];
+  buffer[2] = input[19];
+  buffer[3] = input[20];
+  buffer[4] = input[21];
+  buffer[5] = '\0';
+  keyframe[input[1]].duration = atoi(buffer);
   
 }
 
