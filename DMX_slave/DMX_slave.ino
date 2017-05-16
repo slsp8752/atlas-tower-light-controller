@@ -15,7 +15,7 @@
 #include <Wire.h>
 
 #define DEBUG 1
-#define INPUT_SIZE 22 // This is the size of the I2C buffer, in bytes
+#define INPUT_SIZE 22 // This is the size of a keyframe, in bytes
 #define NUM_KEYS 10   // This is the total number of keyframes, for future use
 
 
