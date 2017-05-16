@@ -15,7 +15,7 @@
 #include <Wire.h>
 
 #define DEBUG 1
-#define INPUT_SIZE 32 // This is the size of the I2C buffer, in bytes
+#define INPUT_SIZE 22 // This is the size of the I2C buffer, in bytes
 #define NUM_KEYS 10   // This is the total number of keyframes, for future use
 
 
@@ -94,6 +94,12 @@ void receiveData(int a) {
 
   // check for malformed data
   if (input[0] != 'k' || input[2] != 'r' || input[6] != 'g' || input[10] != 'b' || input[14] != 'm' || input[16] != 't'){
+    Serial.println(input[0]);
+    Serial.println(input[2]);
+    Serial.println(input[6]);
+    Serial.println(input[10]);
+    Serial.println(input[14]);
+    Serial.println(input[16]);
     Serial.println("Malformed data, exiting parser...");
     return;
   }
@@ -143,6 +149,8 @@ void receiveData(int a) {
   buffer[4] = input[21];
   buffer[5] = '\0';
   keyframes[input[1]].duration = atoi(buffer);
+
+  if(DEBUG) Serial.println(keyframes[input[1]].blue);
   
 }
 
