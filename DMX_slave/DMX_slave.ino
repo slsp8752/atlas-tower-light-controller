@@ -114,26 +114,26 @@ void receiveData(int a) {
   buffer[1] = input[4];
   buffer[2] = input[5];
   buffer[3] = '\0';
-  keyframe[input[1]].red = atoi(buffer);
+  keyframes[input[1]].red = atoi(buffer);
 
   //green
   buffer[0] = input[7];
   buffer[1] = input[8];
   buffer[2] = input[9];
   buffer[3] = '\0';
-  keyframe[input[1]].green = atoi(buffer);
+  keyframes[input[1]].green = atoi(buffer);
 
   //blue
   buffer[0] = input[11];
   buffer[1] = input[12];
   buffer[2] = input[13];
   buffer[3] = '\0';
-  keyframe[input[1]].blue = atoi(buffer);
+  keyframes[input[1]].blue = atoi(buffer);
 
   //mode
   buffer[0] = input[15];
   buffer[1] = '\0';
-  keyframe[input[1]].mode = atoi(buffer);
+  keyframes[input[1]].mode = atoi(buffer);
 
   //duration
   buffer[0] = input[17];
@@ -142,7 +142,7 @@ void receiveData(int a) {
   buffer[3] = input[20];
   buffer[4] = input[21];
   buffer[5] = '\0';
-  keyframe[input[1]].duration = atoi(buffer);
+  keyframes[input[1]].duration = atoi(buffer);
   
 }
 
