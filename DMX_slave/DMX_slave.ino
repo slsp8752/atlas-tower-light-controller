@@ -15,7 +15,7 @@
 #include <Wire.h>
 
 #define DEBUG 1
-#define INPUT_SIZE 22 // This is the size of a keyframe, in bytes
+#define INPUT_SIZE 32 // This is the size of a keyframe, in bytes
 #define NUM_KEYS 10   // This is the total number of keyframes, for future use
 
 
@@ -63,6 +63,7 @@ void setup() {
   Wire.begin(8);
   // Receive the keyframes
   Wire.onReceive(receiveData);
+  DmxSimple.maxChannel(3);
 
 }
 
@@ -91,7 +92,7 @@ void receiveData(int a) {
   }
 
   Serial.println(input);
-
+  Serial.println(Wire.available());
   // check for malformed data
   if (input[0] != 'k' || input[2] != 'r' || input[6] != 'g' || input[10] != 'b' || input[14] != 'm' || input[16] != 't'){
     Serial.println(input[0]);

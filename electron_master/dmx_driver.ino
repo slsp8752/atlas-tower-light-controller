@@ -12,9 +12,13 @@ void loop() {
       Wire.write("k1r255g000b128mFt10000");
       Wire.endTransmission();
 
+      delay(10);
+
       Wire.beginTransmission(8);
       Wire.write("k2r255g000b128mFt10000");
       Wire.endTransmission();
+
+      delay(10);
 
       Wire.beginTransmission(8);
       Wire.write("k3r255g000b128mFt10000");
