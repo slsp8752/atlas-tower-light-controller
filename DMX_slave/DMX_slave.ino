@@ -196,7 +196,7 @@ void receiveData(int a) {
     i++;
   }
 
-  int incomingFrame = atoi(input[1]);
+  int incomingFrame = input[1] - '0';
   Serial.println(input); //Print keyframe
   //Serial.print("Wire.available: ");
   //Serial.println(Wire.available());

@@ -25,7 +25,7 @@ void loop() {
       Wire.write("k2r255g000b128m2t10000");
       Wire.endTransmission();
     //}
-    delay(10000);
+    delay(60000);
   }
   delay(1000000);
 }
