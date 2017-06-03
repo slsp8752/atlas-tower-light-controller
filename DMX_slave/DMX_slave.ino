@@ -6,7 +6,7 @@
 
 // TODO
 // Limit duration
-// Normalize millis axis during fade calculation 
+// Normalize millis axis during fade calculation
 
 
 #include <Wire.h>
@@ -49,15 +49,15 @@ keyframe key6 = {.knum = 6, .red = 0, .green = 0, .blue = 0, .mode = 1, .duratio
 keyframe key7 = {.knum = 7, .red = 255, .green = 255, .blue = 255, .mode = 1, .duration = 500};
 keyframe key8 = {.knum = 8, .red = 0, .green = 0, .blue = 0, .mode = 1, .duration = 500};
 keyframe key9 = {.knum = 9, .red = 255, .green = 255, .blue = 255, .mode = 1, .duration = 500};
-keyframe currentKey = {.knum = 0, .red = 0, .green = 0, .blue = 0, .mode = 0, .duration = 0};
-keyframe nextKey = {.knum = 0, .red = 0, .green = 0, .blue = 0, .mode = 0, .duration = 0};
+keyframe currentKey = key0;
+keyframe nextKey = key1;
 
 struct keyframe keyframes[NUM_KEYS] = {key0, key1, key2, key3, key4, key5, key6, key7, key8, key9};
 
 void setup() {
 
   if (DEBUG)
-    Serial.begin(9600);
+    Serial.begin(115200);
 
   newKeySet = true;
   
@@ -83,33 +83,27 @@ void loop()
   // Send dmx data!
   if(newKeySet)
   {  
+    Serial.println("CASE: newKeySet = true");
     currentKey = keyframes[0];
     
-    if(keyframes[currentKey.knum + 1].mode){ // Check if next keyframe is used
-      nextKey = keyframes[currentKey.knum + 1]; // If so, use it as the next keyframe
-    }
-    
-    else
-    {
-      nextKey = keyframes[0]; // else use the first keyframe
-    }
+    incrementNextKey();
     
     newKeySet = false; // Reset new keyframe flag
     
   }
   else if(millis()-previousTime > currentKey.duration)
   {
-    if(keyframes[currentKey.knum + 1].mode){ // Check if next keyframe is used
-      nextKey = keyframes[currentKey.knum + 1]; // If so, use it as the next keyframe
-    }
+    Serial.println("CASE: Transitioning to next frame");
+    currentKey = nextKey;
+
+    incrementNextKey();
     
-    else
-    {
-      nextKey = keyframes[0]; // else use the first keyframe
-    }
     previousTime = millis();
   }
 
+  Serial.print("Key num: ");
+  Serial.println(currentKey.knum);
+  
   //Check fade mode
   int fadeTimeNow = millis() - previousTime;
   int fadeTimeEnd = currentKey.duration;
@@ -117,13 +111,14 @@ void loop()
   switch(currentKey.mode){
     
     case 1: // Snap
+    Serial.println("CASE: Snap");
       dmxRed = currentKey.red;
       dmxGreen = currentKey.green;
       dmxBlue = currentKey.blue;
       break;
     
     case 2: // Fade 
-    
+      Serial.println("CASE: Fade");
       dmxRed = calculateFade(nextKey.red, currentKey.red, fadeTimeEnd, fadeTimeNow); 
       dmxGreen = calculateFade(nextKey.green, currentKey.green, fadeTimeEnd, fadeTimeNow); 
       dmxBlue = calculateFade(nextKey.blue, currentKey.blue, fadeTimeEnd, fadeTimeNow); 
@@ -131,6 +126,7 @@ void loop()
       break;
     
     default:
+      Serial.println("CASE: Deafult");
     // Add default case!
       break;
   }
@@ -143,9 +139,12 @@ void loop()
   DmxSimple.write(GREENCHANNEL, dmxGreen);
   DmxSimple.write(BLUECHANNEL, dmxBlue);
 
-  if(DEBUG){  
+  if(DEBUG){
+    Serial.print("RED: ");  
     Serial.println(dmxRed);
+    Serial.print("GREEN: ");  
     Serial.println(dmxGreen);
+    Serial.print("BLUE: ");  
     Serial.println(dmxBlue);
   }
 
@@ -160,7 +159,28 @@ int calculateFade(int valEnd, int valStart, int timeEnd, int timeNow){
     
 }
 
+void incrementNextKey(){
+  if(nextKey.knum == (NUM_KEYS - 1))
+  {
+    nextKey = keyframes[0];
+  }
+  else
+  {
+    if(keyframes[currentKey.knum + 1].mode){ // Check if next keyframe is used
+      Serial.println("it exists");
+    
+      nextKey = keyframes[currentKey.knum + 1]; // If so, use it as the next keyframe
+    }
+    else
+    {
+      Serial.println("it doesn't exist, wrap around");
+      nextKey = keyframes[0]; // else use the first keyframe
+    }
+  }
+}
+
 void receiveData(int a) {
+  Serial.println("IN receiveData");
 
   // data must be formatted exactly as follows - k1r255g000b128m1t10000
   // currently, if the first keyframe is malformed, the rest will be loaded over past data without regard to the current buffer
@@ -170,6 +190,7 @@ void receiveData(int a) {
   
   // Grab i2c data, it maxes out at 32 bytes
   while(Wire.available()){
+    Serial.println("IN while wire");
     
     if (i >= INPUT_SIZE-1)
       break;
@@ -179,7 +200,8 @@ void receiveData(int a) {
     i++;
   }
   
-  Serial.println(input);
+  Serial.println(input); //Print keyframe
+  Serial.print("Wire.available: ");
   Serial.println(Wire.available());
   // check for malformed data
   if (input[0] != 'k' || input[2] != 'r' || input[6] != 'g' || input[10] != 'b' || input[14] != 'm' || input[16] != 't'){
@@ -190,7 +212,7 @@ void receiveData(int a) {
   // check keyframe number - if 1, then clear other keyframes first
   // refill keyframe buffers
   
-  if (input[1] == 1){
+  if (input[1] == 0){
     newKeySet = true;
     for(int j = 0; j < NUM_KEYS; j++){
       keyframes[j].mode = 0;            // clear all keyframe modes until proven to be used
