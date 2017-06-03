@@ -9,7 +9,6 @@
 // Normalize millis axis during fade calculation
 
 
-#include <Wire.h>
 #include <DmxSimple.h>
 #include <Wire.h>
 
@@ -63,9 +62,6 @@ void setup() {
   
   // initialize the DMX output on pin 3
   DmxSimple.usePin(3);
-
-  // We only use 4 lights, ignore other channels
-  DmxSimple.maxChannel(4);
 
   // Start as I2C slave on address 8
   Wire.begin(8);
@@ -126,7 +122,7 @@ void loop()
       break;
     
     default:
-      Serial.println("CASE: Deafult");
+      Serial.println("CASE: Default");
     // Add default case!
       break;
   }
@@ -140,12 +136,12 @@ void loop()
   DmxSimple.write(BLUECHANNEL, dmxBlue);
 
   if(DEBUG){
-    Serial.print("RED: ");  
-    Serial.println(dmxRed);
-    Serial.print("GREEN: ");  
-    Serial.println(dmxGreen);
-    Serial.print("BLUE: ");  
-    Serial.println(dmxBlue);
+    //Serial.print("RED: ");  
+    //Serial.println(dmxRed);
+    //Serial.print("GREEN: ");  
+    //Serial.println(dmxGreen);
+    //Serial.print("BLUE: ");  
+    //Serial.println(dmxBlue);
   }
 
   //TODO: wait for a little
@@ -190,7 +186,7 @@ void receiveData(int a) {
   
   // Grab i2c data, it maxes out at 32 bytes
   while(Wire.available()){
-    Serial.println("IN while wire");
+    //Serial.println("IN while wire");
     
     if (i >= INPUT_SIZE-1)
       break;
@@ -199,10 +195,11 @@ void receiveData(int a) {
 
     i++;
   }
-  
+
+  int incomingFrame = atoi(input[1]);
   Serial.println(input); //Print keyframe
-  Serial.print("Wire.available: ");
-  Serial.println(Wire.available());
+  //Serial.print("Wire.available: ");
+  //Serial.println(Wire.available());
   // check for malformed data
   if (input[0] != 'k' || input[2] != 'r' || input[6] != 'g' || input[10] != 'b' || input[14] != 'm' || input[16] != 't'){
     Serial.println("Malformed data, exiting parser...");
@@ -212,10 +209,12 @@ void receiveData(int a) {
   // check keyframe number - if 1, then clear other keyframes first
   // refill keyframe buffers
   
-  if (input[1] == 0){
+  if (incomingFrame == 0){
+    Serial.println("IN THAT IF YO");
     newKeySet = true;
     for(int j = 0; j < NUM_KEYS; j++){
       keyframes[j].mode = 0;            // clear all keyframe modes until proven to be used
+
     }
   }
   
@@ -226,26 +225,35 @@ void receiveData(int a) {
   buffer[1] = input[4];
   buffer[2] = input[5];
   buffer[3] = '\0';
-  keyframes[input[1]].red = atoi(buffer);
+  keyframes[incomingFrame].red = atoi(buffer);
+
+  Serial.print("atoi(buffer): ");
+  Serial.println(atoi(buffer));
+  //Serial.print("RED RECEIVED: ");
+  //Serial.println(atoi(buffer)); //Print out what is theoretically stored as a keyframe
 
   //green
   buffer[0] = input[7];
   buffer[1] = input[8];
   buffer[2] = input[9];
   buffer[3] = '\0';
-  keyframes[input[1]].green = atoi(buffer);
+  keyframes[incomingFrame].green = atoi(buffer);
+  //Serial.print("GREEN RECEIVED: ");
+  //Serial.println(atoi(buffer)); //Print out what is theoretically stored as a keyframe
 
   //blue
   buffer[0] = input[11];
   buffer[1] = input[12];
   buffer[2] = input[13];
   buffer[3] = '\0';
-  keyframes[input[1]].blue = atoi(buffer);
+  keyframes[incomingFrame].blue = atoi(buffer);
+  //Serial.print("BLUE RECEIVED: ");
+  //Serial.println(atoi(buffer)); //Print out what is theoretically stored as a keyframe
 
   //mode
   buffer[0] = input[15];
   buffer[1] = '\0';
-  keyframes[input[1]].mode = atoi(buffer);
+  keyframes[incomingFrame].mode = atoi(buffer);
 
   //duration
   buffer[0] = input[17];
@@ -254,7 +262,7 @@ void receiveData(int a) {
   buffer[3] = input[20];
   buffer[4] = input[21];
   buffer[5] = '\0';
-  keyframes[input[1]].duration = atoi(buffer);
+  keyframes[incomingFrame].duration = atoi(buffer);
   
 }
 
