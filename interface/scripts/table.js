@@ -1,9 +1,11 @@
-function addFrame(table, color, position){
-	// Create Table
+function addFrame(table, color, position, newFrameButton){
+
+	// Create Row
 	var frame = table.insertRow(position);
 	var colorCell = frame.insertCell(0);
 	var transitionCell = frame.insertCell(1);
 	var durationCell = frame.insertCell(2); 
+	var deleteCell = frame.insertCell(3);
 
 	// Create Color Picker
 		
@@ -13,7 +15,6 @@ function addFrame(table, color, position){
 	colorPicker.setAttribute("value", color);
 
 	var colorPickerButton = document.createElement("button");
-	colorPickerButton.classList.add("inputs");
 	var picker = new jscolor(colorPickerButton);
 	picker.fromString(color);
 	colorPickerButton.style.width = "75px";
@@ -22,7 +23,6 @@ function addFrame(table, color, position){
 
 	// Create Transition Dropdown
 	var transitionDropdown = document.createElement("select");
-	transitionDropdown.classList.add("inputs");
 	var t1 = new Option();
 	var t2 = new Option();
 	t1.value = 1;
@@ -35,7 +35,6 @@ function addFrame(table, color, position){
 
 	// Create Duration Field
 	var durationInput = document.createElement("input");
-	durationInput.classList.add("inputs");
 	durationInput.type = "number";
 	durationInput.min = 1;
 	durationInput.max = 10000;
@@ -47,12 +46,22 @@ function addFrame(table, color, position){
 	transitionCell.appendChild(transitionDropdown);
 	durationCell.appendChild(durationInput);
 
-	var inputs, index;
+	if(table.rows.length > 3){
+		var deleteButton = document.createElement("button");
+		deleteButton.innerText = "Delete";
+		deleteButton.onclick = function() {table.deleteRow(getRowNumber(deleteCell));};
+		deleteCell.appendChild(deleteButton);	
+	}
+
+	if(table.rows.length == 12) newFrameButton.disabled = true;
+
 
 	console.log(rowToKeyframe(table, 1));
-	//var queryString = $('#keyframesForm').serialize();
-	//console.log(queryString);
 	
+}
+
+function getRowNumber(cell){
+	return cell.parentElement.rowIndex; 
 }
 
 function rowToKeyframe(table, rowNumber){
@@ -80,8 +89,6 @@ function hexToRgb(hex) {
     } : null;
 }
 
-//alert( hexToRgb("#0033ff").g ); // "51";
-
 window.onload = function(){
 
 
@@ -96,6 +103,6 @@ window.onload = function(){
 	newFrameButton.innerHTML = "New Keyframe";
 	buttonCell.appendChild(newFrameButton);
 
-	newFrameButton.addEventListener("click", function(){ addFrame(keyframeTable, randomHexColor(), keyframeTable.rows.length - 1); });
+	newFrameButton.addEventListener("click", function(){ addFrame(keyframeTable, randomHexColor(), keyframeTable.rows.length - 1, newFrameButton); });
 
 }
