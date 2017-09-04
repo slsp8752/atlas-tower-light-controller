@@ -46,22 +46,25 @@ function addFrame(table, color, position, newFrameButton){
 	transitionCell.appendChild(transitionDropdown);
 	durationCell.appendChild(durationInput);
 
-	if(table.rows.length > 3){
-		var deleteButton = document.createElement("button");
-		deleteButton.innerText = "Delete";
-		deleteButton.onclick = function() {table.deleteRow(getRowNumber(deleteCell));};
-		deleteCell.appendChild(deleteButton);	
-	}
+	var deleteButton = document.createElement("button");
+	deleteButton.innerText = "Delete";
+	deleteButton.onclick = function() {deleteFrame(table, deleteCell);};
+	deleteCell.appendChild(deleteButton);	
 
-	if(table.rows.length == 12) newFrameButton.disabled = true;
+	if(table.rows.length > 11) newFrameButton.disabled = true;
 
+	else if(table.rows.length < 3) table.rows[1].cells[3].getElementsByTagName("button")[0].disabled = true;
+	else table.rows[1].cells[3].getElementsByTagName("button")[0].disabled = false;
 
 	console.log(rowToKeyframe(table, 1));
 	
 }
 
-function getRowNumber(cell){
-	return cell.parentElement.rowIndex; 
+function deleteFrame(table, cell){
+	index = cell.parentElement.rowIndex;
+	if(table.rows.length > 3) table.deleteRow(cell.parentElement.rowIndex);
+	if(table.rows.length < 4) table.rows[1].cells[3].getElementsByTagName("button")[0].disabled = true;
+
 }
 
 function rowToKeyframe(table, rowNumber){
