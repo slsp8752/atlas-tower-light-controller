@@ -1,5 +1,7 @@
 function addFrame(table, color, position, newFrameButton){
 
+	if(table.rows.length > 11) return;
+
 	// Create Row
 	var frame = table.insertRow(position);
 	var colorCell = frame.insertCell(0);
@@ -64,6 +66,7 @@ function deleteFrame(table, cell){
 	index = cell.parentElement.rowIndex;
 	if(table.rows.length > 3) table.deleteRow(cell.parentElement.rowIndex);
 	if(table.rows.length < 4) table.rows[1].cells[3].getElementsByTagName("button")[0].disabled = true;
+	if(table.rows.length < 12) table.rows[table.rows.length-1].cells[0].getElementsByTagName("button")[0].disabled = false; 
 
 }
 
@@ -106,6 +109,6 @@ window.onload = function(){
 	newFrameButton.innerHTML = "New Keyframe";
 	buttonCell.appendChild(newFrameButton);
 
-	newFrameButton.addEventListener("click", function(){ addFrame(keyframeTable, randomHexColor(), keyframeTable.rows.length - 1, newFrameButton); });
+	newFrameButton.addEventListener("click", function(){addFrame(keyframeTable, randomHexColor(), keyframeTable.rows.length - 1, newFrameButton); });
 
 }
