@@ -13,3 +13,9 @@ td, th {
 tr:nth-child(even) {
     background-color: #eeeeee;
 }
+
+.divider{
+    width:5px;
+    height:auto;
+    display:inline-block;
+}

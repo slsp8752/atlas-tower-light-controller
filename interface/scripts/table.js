@@ -58,7 +58,6 @@ function addFrame(table, color, position, newFrameButton){
 	else if(table.rows.length < 3) table.rows[1].cells[3].getElementsByTagName("button")[0].disabled = true;
 	else table.rows[1].cells[3].getElementsByTagName("button")[0].disabled = false;
 
-	console.log(rowToKeyframe(table, 1));
 	
 }
 
@@ -102,13 +101,32 @@ window.onload = function(){
 
 	//If no keyframe data can be found, set up default table with one entry
 	addFrame(keyframeTable, "FF0000", keyframeTable.rows.length);
-
+	
 	var newFrameRow = keyframeTable.insertRow(keyframeTable.rows.length);
-	var buttonCell = newFrameRow.insertCell(0);
+	var newButtonCell = newFrameRow.insertCell(0);
+	var submitButtonCell = newFrameRow.insertCell(1); 
+	var submitButton = document.createElement("button");
 	var newFrameButton = document.createElement("button");
-	newFrameButton.innerHTML = "New Keyframe";
-	buttonCell.appendChild(newFrameButton);
+	var buttonDiv = document.createElement("div");
 
-	newFrameButton.addEventListener("click", function(){addFrame(keyframeTable, randomHexColor(), keyframeTable.rows.length - 1, newFrameButton); });
+	buttonDiv.className = "divider"; 
+	newFrameButton.innerHTML = "New Keyframe";
+	submitButton.innerHTML = "Send Keyframes";
+
+	newButtonCell.appendChild(newFrameButton);
+	newButtonCell.appendChild(buttonDiv);
+	newButtonCell.appendChild(submitButton);
+
+	newFrameButton.addEventListener("click", function(){
+		addFrame(keyframeTable, randomHexColor(), keyframeTable.rows.length - 1, newFrameButton);
+	});
+
+	submitButton.addEventListener("click", function(){
+		var keyframesString = "";
+		for(i = 1; i < keyframeTable.rows.length-1; i++){
+			keyframesString += rowToKeyframe(keyframeTable, i);	
+		}
+		console.log(keyframesString);
+	});
 
 }
