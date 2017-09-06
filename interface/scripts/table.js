@@ -104,7 +104,6 @@ window.onload = function(){
 	
 	var newFrameRow = keyframeTable.insertRow(keyframeTable.rows.length);
 	var newButtonCell = newFrameRow.insertCell(0);
-	var submitButtonCell = newFrameRow.insertCell(1); 
 	var submitButton = document.createElement("button");
 	var newFrameButton = document.createElement("button");
 	var buttonDiv = document.createElement("div");
