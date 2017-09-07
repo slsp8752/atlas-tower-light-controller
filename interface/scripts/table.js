@@ -62,7 +62,7 @@ function addFrame(table, color, position, newFrameButton){
 }
 
 function deleteFrame(table, cell){
-	index = cell.parentElement.rowIndex;
+	var index = cell.parentElement.rowIndex;
 	if(table.rows.length > 3) table.deleteRow(cell.parentElement.rowIndex);
 	if(table.rows.length < 4) table.rows[1].cells[3].getElementsByTagName("button")[0].disabled = true;
 	if(table.rows.length < 12) table.rows[table.rows.length-1].cells[0].getElementsByTagName("button")[0].disabled = false; 
@@ -70,15 +70,36 @@ function deleteFrame(table, cell){
 }
 
 function rowToKeyframe(table, rowNumber){
-	rgb = hexToRgb(table.rows[rowNumber].cells[0].innerText);
+	var rgb = hexToRgb(table.rows[rowNumber].cells[0].innerText);
 
-	modeSel = table.rows[rowNumber].cells[1].getElementsByTagName("select")[0];
-	mode = modeSel.options[modeSel.selectedIndex].value;
+	var modeSel = table.rows[rowNumber].cells[1].getElementsByTagName("select")[0];
+	var mode = modeSel.options[modeSel.selectedIndex].value;
 
-	dur = ("00000" + table.rows[rowNumber].cells[2].getElementsByTagName("input")[0].value).substr(-5,5);
+	var dur = ("00000" + table.rows[rowNumber].cells[2].getElementsByTagName("input")[0].value).substr(-5,5);
 
 	return ("k" + rowNumber + "r" + rgb.r + "g" + rgb.g + "b" + rgb.b + "m" + mode + "t" + dur);
 
+}
+
+function sendKeyframes(frames){
+	var http = new XMLHttpRequest();
+	var baseURL = "https://api.particle.io/v1/devices/";
+	var deviceID = ENV["DEVICE_ID"];
+	var functionName = "functionName";
+	var token = ENV["ACCESS_TOKEN"];
+	var url = baseURL + deviceID + "/" + functionName + "?" + token ;
+	var params = "arg=" + frames;
+	http.open("POST", url, true);
+
+	//Send the proper header information along with the request
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+	http.onreadystatechange = function() {//Call a function when the state changes.
+		if(http.readyState == 4 && http.status == 200) {
+			alert(http.responseText);
+		}
+	}
+	http.send(params);	
 }
 
 function randomHexColor(){
@@ -125,7 +146,7 @@ window.onload = function(){
 		for(i = 1; i < keyframeTable.rows.length-1; i++){
 			keyframesString += rowToKeyframe(keyframeTable, i);	
 		}
-		console.log(keyframesString);
+		sendKeyframes(keyframesString);
 	});
 
 }
