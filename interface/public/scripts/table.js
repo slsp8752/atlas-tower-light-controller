@@ -77,29 +77,8 @@ function rowToKeyframe(table, rowNumber){
 
 	var dur = ("00000" + table.rows[rowNumber].cells[2].getElementsByTagName("input")[0].value).substr(-5,5);
 
-	return ("k" + rowNumber + "r" + rgb.r + "g" + rgb.g + "b" + rgb.b + "m" + mode + "t" + dur);
+	return ("k" + (rowNumber-1) + "r" + rgb.r + "g" + rgb.g + "b" + rgb.b + "m" + mode + "t" + dur);
 
-}
-
-function sendKeyframes(frames){
-	var http = new XMLHttpRequest();
-	var baseURL = "https://api.particle.io/v1/devices/";
-	var deviceID = ENV["DEVICE_ID"];
-	var functionName = "functionName";
-	var token = ENV["ACCESS_TOKEN"];
-	var url = baseURL + deviceID + "/" + functionName + "?" + token ;
-	var params = "arg=" + frames;
-	http.open("POST", url, true);
-
-	//Send the proper header information along with the request
-	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-	http.onreadystatechange = function() {//Call a function when the state changes.
-		if(http.readyState == 4 && http.status == 200) {
-			alert(http.responseText);
-		}
-	}
-	http.send(params);	
 }
 
 function randomHexColor(){
@@ -141,12 +120,19 @@ window.onload = function(){
 		addFrame(keyframeTable, randomHexColor(), keyframeTable.rows.length - 1, newFrameButton);
 	});
 
+	//framepair1=k1...k2...&framepair2=k3...k4...&framepair3=k5...k6...&framepair4=k7...k8... ...
+
 	submitButton.addEventListener("click", function(){
-		var keyframesString = "";
+		//var keyframesString = "";
+		var framepairs = ["", "", "", "", ""]; //Empty strings will be included in the final set of args so the server can check if they're empty, and only make a post request for non-empty args
+
 		for(i = 1; i < keyframeTable.rows.length-1; i++){
-			keyframesString += rowToKeyframe(keyframeTable, i);	
+			framepairs[Math.ceil(i/2)-1] += rowToKeyframe(keyframeTable, i); //Map every two keyframes to each entry in framepairs
+			if(i == keyframeTable.rows.length-2) framepairs[Math.ceil(i/2)-1] += 'F';
 		}
-		sendKeyframes(keyframesString);
+		var argString = "/send?framepair0="+ framepairs[0] + "&framepair1="+ framepairs[1] + "&framepair2="+ framepairs[2] + "&framepair3="+ framepairs[3] + "&framepair4="+ framepairs[4]; 
+		//window.location.href='/send?keyframes='+keyframesString;
+		window.location.href = argString;
 	});
 
 }
