@@ -56,6 +56,11 @@ struct keyframe keyframes[NUM_KEYS] = {key0, key1, key2, key3, key4, key5, key6,
 
 void setup() {
 
+  //Temp LED pins
+  pinMode(9, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
+
   if (DEBUG)
     Serial.begin(115200);
 
@@ -74,6 +79,7 @@ void setup() {
 
 void loop() 
 {
+  
   int dmxRed = 255;
   int dmxGreen = 255;
   int dmxBlue = 255;
@@ -160,18 +166,24 @@ void loop()
   dmxGreen = constrain(dmxGreen, 0, 255);
   dmxBlue = constrain(dmxBlue, 0, 255);
 
-  /*if(DEBUG){
+  if(DEBUG){
     Serial.print("Red: ");
     Serial.print(dmxRed);
     Serial.print(" Green: ");
     Serial.print(dmxGreen);
     Serial.print(" Blue: ");
     Serial.println(dmxBlue);
-  }*/
+  }
 
   DmxSimple.write(REDCHANNEL, dmxRed);
   DmxSimple.write(GREENCHANNEL, dmxGreen);
   DmxSimple.write(BLUECHANNEL, dmxBlue);
+
+  // Temp LED output
+
+  analogWrite(10, dmxRed);
+  analogWrite(11, dmxGreen);
+  analogWrite(9, dmxBlue);
 
   if(DEBUG){
     //Serial.print("RED: ");  

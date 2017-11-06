@@ -133,6 +133,8 @@ window.onload = function(){
 		var argString = "/send?framepair0="+ framepairs[0] + "&framepair1="+ framepairs[1] + "&framepair2="+ framepairs[2] + "&framepair3="+ framepairs[3] + "&framepair4="+ framepairs[4]; 
 		//window.location.href='/send?keyframes='+keyframesString;
 		window.location.href = argString;
+		//var query = window.location.search.substring(1);
+		//var qs = parse_query_string(query);
 	});
 
 }
