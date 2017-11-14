@@ -9,19 +9,19 @@ This is an Internet connected DMX controller for the lights inside the tower of 
 
 Fritzing Diagram:
 
-![Fritzing Diagram](fritzing.png)
+![Fritzing Diagram](images/fritzing.png)
 
 Two microcontrollers are used, as the Electron doesn't have a DMX library written for it. We use the electron to receive and verify key frame data, and then pass it to the Arduino Pro Mini over I2C. The Pro Mini then handles parsing, looping and outputting the DMX data.
 
 For regular DMX lights/XLR-5 connectors, connect ground to the black wire on the diagram, data+ to the white wire on the diagram, and data- to the brown wire on the diagram.
 
 The "Color Kinetics" lights use RJ45 connectors instead of the usual XLR-5 connector for carrying DMX data. Below you can find the pinout used by the lights, as it isn't the standard pinout for DMX over CAT5. We opted to use a female RJ45 connector on the Arduino side, so only the right half of the diagram is really relevant. However, using the provided pinout allows you to connect other DMX controllers if desired.
-![RJ45 to XLR5 wiring](rj45.png)
+![RJ45 to XLR5 wiring](images/rj45.png)
 Original Document: http://www.dl.colorkinetics.com/files/web/support/pro/wiring/RJ45_TO_XLR5_ADP-DMX.pdf
 
 For the Color Kinetics system specifically, connect the controller to the "DMX IN" port in the bottom black box in the tower. (The one farthest to the left in this picture.)
 
-![Power Box](box.jpg)
+![Power Box](images/box.jpg)
 
 ### Software
 
@@ -81,7 +81,7 @@ Color data is sent in "key frames," each of which has a color, duration, and tra
 
 You can create new key frames by clicking the "New Keyframe" button, up to a limit of ten frames. When you're ready to send the data to the lights, press the "Send Keyframes" button.
 
-![Light Data Interface](Interface.png)
+![Light Data Interface](images/Interface.png)
 
 ### Without the Interface
 
