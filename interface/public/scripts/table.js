@@ -41,7 +41,7 @@ function addFrame(table, color, position, newFrameButton){
 	durationInput.min = 1;
 	durationInput.max = 10000;
 	durationInput.setAttribute("name", "duration");
-	durationInput.setAttribute("value", 0);
+	durationInput.setAttribute("value", 1000);
 
 	// Append them to their respective cells
 	colorCell.appendChild(colorPickerButton);
